@@ -41,6 +41,7 @@ let questions = [
   },
 ];
 
+let rightQuestions = 0;
 let currentQuestion = 0;
 
 function init() {
@@ -50,15 +51,36 @@ function init() {
 }
 
 function showQuestion() {
-  if (currentQuestion >= questions.length) {
-    //TODO
-    document.getElementById("endScreen").style = "";
-    document.getElementById("questionBody").style= "display: none";
+  if (gameIsOver()) {
+    showEndScreen();
   } else {
+    updateProgressBar();
+    updateToNextQuestion();
+  }
+
+  function gameIsOver() {
+    return currentQuestion >= questions.length;
+  }
+
+  function showEndScreen() {
+    document.getElementById("endScreen").style = "";
+    document.getElementById("questionBody").style = "display: none";
+    document.getElementById("amount-of-questions").innerHTML = questions.length;
+    document.getElementById("amount-of-right-questions").innerHTML =
+      rightQuestions;
+    document.getElementById("header-image").src = "./assets/Quizapp/tropy.png";
+  }
+
+  function updateProgressBar() {
+    let percent = (currentQuestion + 1) / questions.length;
+    percent = Math.round(percent * 100);
+    document.getElementById("progress-bar").innerHTML = `${percent}%`;
+    document.getElementById("progress-bar").style = `width: ${percent}%`;
+  }
+
+  function updateToNextQuestion() {
     let question = questions[currentQuestion];
-
     document.getElementById("question-number").innerHTML = currentQuestion + 1;
-
     document.getElementById("questionText").innerHTML = question["question"];
     document.getElementById("answerText_1").innerHTML = question["answer_1"];
     document.getElementById("answerText_2").innerHTML = question["answer_2"];
@@ -69,19 +91,13 @@ function showQuestion() {
 
 function answer(selection) {
   let question = questions[currentQuestion];
-  console.log("Selected answer is", selection);
   let selectedQuestionNumber = selection.slice(-1);
-
-  console.log("selectedQuestionNumber");
-  console.log("Current question is", question["right_answer"]);
-
   let idOfRightAnswer = `answerText_${question["right_answer"]}`;
 
-  if (selectedQuestionNumber == question["right_answer"]) {
-    console.log("Richtige Antwort!");
+  if (rightAnswerSelected(selectedQuestionNumber)) {
     document.getElementById(selection).parentNode.classList.add("bg-success");
+    rightQuestions++;
   } else {
-    console.log("Falsche Antwort :(");
     document.getElementById(selection).parentNode.classList.add("bg-danger");
     document
       .getElementById(idOfRightAnswer)
@@ -95,6 +111,10 @@ function nextQuestion() {
   document.getElementById("next-button").disabled = true;
   resetAnswerButtons();
   showQuestion();
+}
+
+function rightAnswerSelected(selectedQuestionNumber) {
+  return selectedQuestionNumber == questions["right_answer"];
 }
 
 function resetAnswerButtons() {
@@ -122,4 +142,15 @@ function resetAnswerButtons() {
   document
     .getElementById("answerText_4")
     .parentNode.classList.remove("bg-success");
+}
+
+function restartGame() {
+  document.getElementById("header-image").src = "./assets/Quizapp/brainbg.jpg";
+  document.getElementById("endScreen").style = "display: none";
+  document.getElementById("questionBody").style = "";
+
+  rightQuestions = 0;
+  currentQuestion = 0;
+
+  init();
 }

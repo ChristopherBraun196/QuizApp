@@ -31,3 +31,23 @@ body {
 .bg-success, .bg-danger {
   color: white !important;
 }
+
+.img-right{
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.text-center{ 
+    text-align: center;
+}
+
+.final-headline{
+  font-size: 38px;
+  margin-bottom: 32px;
+}
+
+.button-row{
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
